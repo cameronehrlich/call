@@ -1,0 +1,1 @@
+I copied a build of this command line tool into /usr/local/bin manually.
