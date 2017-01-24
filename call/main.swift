@@ -11,39 +11,35 @@ import Darwin
 
 extension String {
     
-    var length : Int {
-        return self.characters.count
-    }
-    
-    func digitsOnly() -> String{
-        let stringArray = self.componentsSeparatedByCharactersInSet(
-            NSCharacterSet.decimalDigitCharacterSet().invertedSet)
-        let newString = stringArray.joinWithSeparator("")
+    func digitsOnly() -> String {
+
+        let stringArray = self.components(
+            separatedBy: CharacterSet.decimalDigits.inverted)
+        let newString = stringArray.joined(separator: "")
         
         return newString
     }
-    
 }
 
-var numberToCall :String? = ""
 
-for argument in Process.arguments {
-    numberToCall = numberToCall! + argument
-}
 
-numberToCall = numberToCall!.digitsOnly()
+var numberToCall: String = CommandLine.arguments.joined(separator: "")
 
-if numberToCall?.length == 0 {
+NSLog("tell://%@&includeAudio=%@", numberToCall, "true")
+
+numberToCall = numberToCall.digitsOnly()
+
+if numberToCall.characters.count == 0 {
     print("Invalid number")
     exit(0)
 }
 
-let myAppleScript = "open location \"tel://\(numberToCall!)?audio=yes\""
+let myAppleScript = "open location \"tel://\(numberToCall)?audio=yes\""
 
 var error: NSDictionary?
 if let scriptObject = NSAppleScript(source: myAppleScript) {
     if let output: NSAppleEventDescriptor = scriptObject.executeAndReturnError(&error) {
-        print("Calling \(numberToCall!)...")
+        print("Calling \(numberToCall)...")
     }
     else if (error != nil) {
         print("error: \(error)")
